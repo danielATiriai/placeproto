@@ -128,9 +128,7 @@ const page = `<!doctype html>
           <p>${label(readiness.stream.recipe.status)} ${escape(readiness.stream.recipe.summary)}</p>
           <p>${label(readiness.stream.hosted.status)} ${escape(readiness.stream.hosted.summary)}</p>
         </div>
-        <div><pre class="snippet"><code>wss://jetstream2.us-east.bsky.network/subscribe
-  ?wantedCollections=community.lexicon.calendar.event
-  &amp;wantedCollections=app.iriai.proto.event</code></pre></div>
+        <div><pre class="snippet"><code>wss://jetstream2.us-east.bsky.network/subscribe?wantedCollections=community.lexicon.calendar.event&amp;wantedCollections=app.iriai.proto.event</code></pre></div>
       </div>
     </section>
 
