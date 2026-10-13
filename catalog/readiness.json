@@ -1,0 +1,50 @@
+{
+  "checkedAt": "2026-10-13",
+  "release": "v0.1.0",
+  "query": {
+    "endpoint": "https://query.iriai.app",
+    "status": "available",
+    "access": "Open with no key and per-caller rate limits. Labelled interim: a key will unlock higher limits later (D-14).",
+    "docs": "https://github.com/danielATiriai/iriai-proto-index#query-api",
+    "evidence": [
+      { "label": "Acceptance run: all nine Japantown seeds returned near Peace Plaza", "url": "https://github.com/danielATiriai/iriai-proto-index/actions/runs/38461986239", "date": "2026-10-13" },
+      { "label": "Try-it example against the live query, run daily", "url": "https://github.com/danielATiriai/iriai-proto/actions/workflows/try-it.yml", "date": "2026-10-13" }
+    ]
+  },
+  "stream": {
+    "status": "planned",
+    "recipe": { "status": "planned", "due": "2026-10-17", "summary": "A documented recipe on Bluesky's public Jetstream, filtered to the PlaceProto record types, with resume inside Jetstream's replay window." },
+    "hosted": { "status": "planned", "summary": "An Iriai-hosted change feed. Coming soon, with no retention, limit or cursor terms committed yet." }
+  },
+  "records": {
+    "app.iriai.proto.event": {
+      "kind": "Record",
+      "title": "Event sidecar",
+      "schema": "published",
+      "query": "available",
+      "ingestion": "Ingested from Jetstream and paired with its community event in the same repository.",
+      "methods": ["app.iriai.proto.queryEvents", "app.iriai.proto.getEvent"],
+      "compatibility": "Sits beside a community.lexicon.calendar.event record, so calendar apps that read the community event keep working; its locations array carries a copy of the sidecar location.",
+      "example": {
+        "$type": "app.iriai.proto.event",
+        "eventUri": "at://did:plc:kd5s7zyp7nje43ievnqhgzrr/community.lexicon.calendar.event/3mxrq3w4c2k2y",
+        "location": { "$type": "community.lexicon.location.geo", "name": "JCCCNC", "latitude": "37.7865506", "longitude": "-122.4308591" }
+      },
+      "exampleSource": "https://bsky.social/xrpc/com.atproto.repo.getRecord?repo=did:plc:kd5s7zyp7nje43ievnqhgzrr&collection=app.iriai.proto.event&rkey=3mxrq3w4c2l2y"
+    },
+    "app.iriai.proto.defs": {
+      "kind": "Definitions",
+      "title": "Event view and version",
+      "schema": "published",
+      "query": "available",
+      "ingestion": "Not a record. eventView is what the query API returns for each event; eventVersion carries both record CIDs for editing.",
+      "methods": ["app.iriai.proto.queryEvents", "app.iriai.proto.getEvent"],
+      "compatibility": "The method lexicons that reference these views ship in a compatible v0.2.0; the service already answers the documented shapes."
+    }
+  },
+  "coming": [
+    { "nsid": "app.iriai.proto.post", "title": "Post sidecar", "summary": "A required location for Bluesky posts. Planned for v0.2.0." },
+    { "nsid": "app.iriai.proto.createEvent and the other methods", "title": "Write and query methods", "summary": "Lexicons for createEvent, updateEvent, deleteEvent, getEvent and queryEvents. Planned for v0.2.0." },
+    { "nsid": "org.placeproto.*", "title": "PlaceProto namespace", "summary": "The same vocabulary under org.placeproto, once governance for the name exists. Records stay under app.iriai.proto until then (D-30)." }
+  ]
+}
