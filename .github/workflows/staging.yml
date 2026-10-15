@@ -1,0 +1,61 @@
+name: Staging sync
+
+on:
+  pull_request_target:
+    types: [labeled, unlabeled, synchronize, closed]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: staging-branch
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    name: Point the staging branch
+    if: github.event_name != 'pull_request_target' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Choose the commit staging should show
+        id: target
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          ACTION: ${{ github.event.action }}
+          LABEL: ${{ github.event.label.name }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          HAS_STAGING_LABEL: ${{ contains(github.event.pull_request.labels.*.name, 'staging') }}
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+        run: |
+          set -euo pipefail
+          current="$(git rev-parse -q --verify origin/staging || true)"
+          target=""
+          if [ "$EVENT_NAME" = "workflow_dispatch" ]; then
+            target="origin/$DEFAULT_BRANCH"
+          elif [ "$EVENT_NAME" = "push" ]; then
+            if [ -z "$current" ] || git merge-base --is-ancestor "$current" "origin/$DEFAULT_BRANCH"; then
+              target="origin/$DEFAULT_BRANCH"
+            fi
+          elif [ "$ACTION" = "labeled" ] && [ "$LABEL" = "staging" ]; then
+            git fetch origin "$HEAD_SHA"
+            target="$HEAD_SHA"
+          elif [ "$ACTION" = "synchronize" ] && [ "$HAS_STAGING_LABEL" = "true" ]; then
+            git fetch origin "$HEAD_SHA"
+            target="$HEAD_SHA"
+          elif { [ "$ACTION" = "closed" ] && [ "$HAS_STAGING_LABEL" = "true" ]; } || { [ "$ACTION" = "unlabeled" ] && [ "$LABEL" = "staging" ]; }; then
+            if [ "$current" = "$HEAD_SHA" ]; then
+              target="origin/$DEFAULT_BRANCH"
+            fi
+          fi
+          echo "target=$target" >> "$GITHUB_OUTPUT"
+      - name: Move the staging branch
+        if: steps.target.outputs.target != ''
+        env:
+          TARGET: ${{ steps.target.outputs.target }}
+        run: git push --force origin "$TARGET:refs/heads/staging"
