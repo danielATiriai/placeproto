@@ -1,0 +1,40 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  schedule:
+    - cron: '41 13 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  site:
+    name: Build, page checks and links
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npm run build
+      - name: Catalog, readiness labels, layout and accessibility
+        run: npm run check
+      - name: Every outbound link resolves
+        run: npm run check-links
+      - name: Container serves the site
+        run: |
+          docker build -t placeproto-site .
+          docker run -d --rm -e PORT=8080 -p 8080:8080 --name site placeproto-site
+          for i in $(seq 1 20); do curl -fsS http://localhost:8080/healthz && break; sleep 1; done
+          curl -fsS http://localhost:8080/ | grep -q 'PlaceProto is an open lexicon'
+          test "$(curl -s -o /dev/null -w '%{http_code}' http://localhost:8080/lexicons/app.iriai.proto.event.json)" = 404
+          curl -fsS -o /dev/null http://localhost:8080/fonts/inter-latin-400-normal.woff2
+          test "$(curl -s -o /dev/null -w '%{http_code}' http://localhost:8080/missing)" = 404
+          docker stop site
