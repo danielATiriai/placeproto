@@ -13,7 +13,7 @@
     },
     "sidecar": {
       "$type": "app.iriai.proto.event",
-      "eventUri": "at://did:plc:kd5s7zyp7nje43ievnqhgzrr/community.lexicon.calendar.event/3mxrq3w4c2k2y",
+      "eventUri": "at://did:plc:kd5s…/community.lexicon.calendar.event/3mxrq…",
       "location": {
         "$type": "community.lexicon.location.geo",
         "name": "JCCCNC",

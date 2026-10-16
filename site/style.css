@@ -23,14 +23,14 @@ p{margin:0}
 .logo:hover{color:var(--heading)}
 .sprig{width:26px;height:26px;color:var(--ink)}
 .main-nav{display:flex;gap:24px;font-size:15px;font-weight:500}
-.main-nav span{display:inline-flex;align-items:center;min-height:44px;color:var(--muted);cursor:default}
+.main-nav span{display:inline-flex;align-items:center;min-height:44px;color:#a39b8e;cursor:default}
 .top-right{display:flex;align-items:center;gap:14px;margin-left:auto}
 .soon-badge{font-size:13px;font-weight:600;color:var(--accent-text);white-space:nowrap}
 .gh{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;color:var(--ink)}
 
 /* The Index column. */
 .ix{max-width:760px;margin:0 auto;padding:44px 0 80px}
-.notice{margin:0 0 30px;padding:10px 14px;font-size:14px;background:var(--code-bg);border:1px solid var(--line);border-radius:4px}
+.ix .notice{margin:0 0 30px;padding:10px 14px;font-size:14px;background:var(--code-bg);border:1px solid var(--line);border-radius:4px}
 .ix h1{font-size:56px;line-height:1.02;margin:0 0 14px}
 .ix h2{font-size:29px;line-height:1.15;margin:48px 0 10px}
 .ix p{margin:0 0 14px}
@@ -44,7 +44,7 @@ p{margin:0}
 .ix ul{margin:0 0 14px;padding-left:20px}
 .ix li{margin:7px 0}
 .soon{margin-left:6px;font-size:12px;font-weight:600;color:var(--accent-text);white-space:nowrap}
-pre.code{margin:16px 0 0;padding:20px 22px;font-size:13px;line-height:1.7;white-space:pre-wrap;overflow-wrap:anywhere;background:var(--code-bg);border:1px solid var(--line);border-radius:4px}
+pre.code{margin:16px 0 0;padding:20px 22px;font-size:13px;line-height:1.7;white-space:pre;overflow-x:auto;background:var(--code-bg);border:1px solid var(--line);border-radius:4px}
 pre.code code{font-size:inherit}
 .tk{color:#8a321a}.ts{color:#3f5d22}.tn{color:#6b3e8a}.tc{color:#6a6257;font-style:italic}
 

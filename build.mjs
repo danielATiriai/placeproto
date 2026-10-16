@@ -100,7 +100,7 @@ const page = `<!doctype html>
 
       <h2 id="how">How it works</h2>
       <p>Any app writes an ordinary calendar event and a small sidecar that says where. Any other app can then find it by place and time.</p>
-      <pre class="code"><code>${comment('event · in the author’s own repository')}
+      <pre class="code" tabindex="0"><code>${comment('event · in the author’s own repository')}
 ${highlight(sample.event)}
 
 ${comment('sidecar · the place, written beside it')}
