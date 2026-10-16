@@ -33,7 +33,8 @@ jobs:
           docker build -t placeproto-site .
           docker run -d --rm -e PORT=8080 -p 8080:8080 --name site placeproto-site
           for i in $(seq 1 20); do curl -fsS http://localhost:8080/healthz && break; sleep 1; done
-          curl -fsS http://localhost:8080/ | grep -q 'An open vocabulary for places'
+          curl -fsS http://localhost:8080/ | grep -q 'PlaceProto is an open lexicon'
           curl -fsS http://localhost:8080/lexicons/app.iriai.proto.event.json | grep -q '"id": "app.iriai.proto.event"'
+          curl -fsS -o /dev/null http://localhost:8080/fonts/inter-latin-400-normal.woff2
           test "$(curl -s -o /dev/null -w '%{http_code}' http://localhost:8080/missing)" = 404
           docker stop site

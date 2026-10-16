@@ -16,152 +16,119 @@ const lexicons = Object.fromEntries(
 
 const escape = (value) => String(value).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c])
 const releaseUrl = `https://github.com/danielATiriai/iriai-proto/releases/tag/${manifest.tag}`
-const sourceUrl = (nsid) => `https://github.com/danielATiriai/iriai-proto/blob/${manifest.sourceCommit}/lexicons/${nsid.split('.').join('/')}.json`
-const label = (state) => `<span class="state state-${escape(state)}">${escape({ published: 'Published', available: 'Available, interim', planned: 'Coming soon', draft: 'Draft' }[state] ?? state)}</span>`
+const repoUrl = 'https://github.com/danielATiriai/placeproto'
 
-const recordEntry = (record) => {
-  const meta = readiness.records[record.nsid]
-  const lexicon = lexicons[record.nsid]
-  return `
-        <article class="entry" id="${escape(record.nsid)}">
-          <header class="entry-head">
-            <p class="kind">${escape(meta.kind)}</p>
-            <h3><code>${escape(record.nsid)}</code></h3>
-            <p class="entry-title">${escape(meta.title)}</p>
-          </header>
-          <p>${escape(lexicon.description)}</p>
-          <dl class="facts">
-            <div><dt>Schema</dt><dd>${label(meta.schema)} in <a href="${releaseUrl}">${escape(manifest.tag)}</a> from <code>${escape(manifest.publisher.handle)}</code></dd></div>
-            <div><dt>Query support</dt><dd>${label(meta.query)} through ${meta.methods.map((m) => `<code>${escape(m)}</code>`).join(' and ')}</dd></div>
-            <div><dt>Indexing</dt><dd>${escape(meta.ingestion)}</dd></div>
-            <div><dt>Compatibility</dt><dd>${escape(meta.compatibility)}</dd></div>
-            <div><dt>Record</dt><dd><code class="wrap">${escape(record.uri)}</code><br>CID <code class="wrap">${escape(record.cid)}</code></dd></div>
-            <div><dt>Owner</dt><dd>Iriai, published from <code>${escape(manifest.publisher.handle)}</code> (<code>${escape(manifest.publisher.did)}</code>), authority <code>${escape(manifest.publisher.authorityRecord)}</code></dd></div>
-          </dl>
-          <p class="links"><a href="lexicons/${escape(record.nsid)}.json">Raw JSON</a><a href="${sourceUrl(record.nsid)}">Source at ${escape(manifest.sourceCommit.slice(0, 7))}</a><a href="${releaseUrl}">Release ${escape(manifest.tag)}</a></p>${
-            meta.example
-              ? `
-          <details class="example"><summary>Example record</summary><pre><code>${escape(JSON.stringify(meta.example, null, 2))}</code></pre><p><a href="${escape(meta.exampleSource)}">The same record, live</a></p></details>`
-              : ''
-          }
-        </article>`
+// Self-hosted fonts (design settled Oct 16): EB Garamond 500 for headings and the wordmark,
+// Inter 400/500/600 for body and UI, IBM Plex Mono 400 for code. Latin and Latin Extended only.
+const fonts = [
+  ['EB Garamond', 'eb-garamond', 500, 'normal'],
+  ['EB Garamond', 'eb-garamond', 400, 'italic'],
+  ['Inter', 'inter', 400, 'normal'],
+  ['Inter', 'inter', 500, 'normal'],
+  ['Inter', 'inter', 600, 'normal'],
+  ['IBM Plex Mono', 'ibm-plex-mono', 400, 'normal'],
+]
+const subsets = { latin: 'U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD', 'latin-ext': 'U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF' }
+const fontFiles = []
+const fontCss = fonts
+  .flatMap(([family, pkg, weight, style]) =>
+    Object.entries(subsets).flatMap(([subset, range]) => {
+      const file = `${pkg}-${subset}-${weight}-${style}.woff2`
+      if (subset === 'latin-ext' && style === 'italic') return [] // not shipped by @fontsource for every face
+      fontFiles.push([join(root, 'node_modules', '@fontsource', pkg, 'files', file), file])
+      return [`@font-face{font-family:"${family}";font-style:${style};font-weight:${weight};font-display:swap;src:url(fonts/${file}) format("woff2");unicode-range:${range}}`]
+    }),
+  )
+  .join('\n')
+
+// JSON with the design's syntax colours: keys, strings, numbers, comments.
+const highlight = (value, indent = 0) => {
+  const pad = '  '.repeat(indent)
+  if (Array.isArray(value)) return `[${value.map((item) => `\n${pad}  ${highlight(item, indent + 1)}`).join(',')}\n${pad}]`
+  if (value && typeof value === 'object') {
+    const entries = Object.entries(value).map(([key, item]) => `\n${pad}  <span class="tk">"${escape(key)}"</span>: ${highlight(item, indent + 1)}`)
+    return `{${entries.join(',')}\n${pad}}`
+  }
+  if (typeof value === 'string') return `<span class="ts">"${escape(value)}"</span>`
+  return `<span class="tn">${escape(value)}</span>`
 }
+const comment = (text) => `<span class="tc">// ${escape(text)}</span>`
 
-const vendored = Object.entries(manifest.vendoredLexicons)
-  .map(([nsid, { cid }]) => `<li><code>${escape(nsid)}</code> <span class="cid">${escape(cid.slice(0, 16))}…</span></li>`)
-  .join('')
+const sprig = '<svg class="sprig" viewBox="0 0 26 26" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><path d="M13 24V9"/><path d="M13 14C8 13 5 9 5 4c5 0 8 4 8 10z"/><path d="M13 11c3-1 6-4 7-8-5 0-7 3-7 8z"/><path d="M8 24h10"/></svg>'
+const github = '<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-3.2 19.5c.5.1.7-.2.7-.5v-1.7c-2.8.6-3.4-1.3-3.4-1.3-.5-1.2-1.1-1.5-1.1-1.5-.9-.6.1-.6.1-.6 1 .1 1.5 1 1.5 1 .9 1.5 2.3 1.1 2.9.8.1-.6.3-1.1.6-1.3-2.2-.3-4.6-1.1-4.6-5a3.9 3.9 0 0 1 1-2.7c-.1-.3-.5-1.3.1-2.7 0 0 .8-.3 2.8 1a9.6 9.6 0 0 1 5 0c1.9-1.3 2.8-1 2.8-1 .5 1.4.2 2.4.1 2.7a3.9 3.9 0 0 1 1 2.7c0 3.9-2.3 4.7-4.6 5 .4.3.7.9.7 1.9V21c0 .3.2.6.7.5A10 10 0 0 0 12 2z"/></svg>'
 
-const evidence = readiness.query.evidence.map((item) => `<li><a href="${escape(item.url)}">${escape(item.label)}</a> <span class="date">${escape(item.date)}</span></li>`).join('')
+const sections = [
+  ['Docs', 'Guides, concepts and the lexicon reference.'],
+  ['Sandbox', 'Write a record and query the live index in your browser.'],
+  ['Blog', 'Releases, field notes and how the index grows.'],
+  ['Showcase', 'Apps that find things by place.'],
+]
 
+const sample = readiness.sample
 const queryExample = `${readiness.query.endpoint}/xrpc/app.iriai.proto.queryEvents?latitude=37.785054&longitude=-122.429827&radiusMeters=1000`
+const sentence = 'PlaceProto is an open lexicon built on AT Protocol that connects what happens online to where it happens in real life.'
 
 const page = `<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>PlaceProto — an open vocabulary for places on the AT Protocol</title>
-  <meta name="description" content="PlaceProto adds a required location to everyday AT Protocol records, so any app can find what is happening at a place. IriaiProto is its first published namespace.">
+  <title>PlaceProto — an open lexicon for places on AT Protocol</title>
+  <meta name="description" content="${escape(sentence)}">
   <meta property="og:title" content="PlaceProto">
-  <meta property="og:description" content="An open vocabulary for places on the AT Protocol.">
+  <meta property="og:description" content="${escape(sentence)}">
   <meta property="og:url" content="https://placeproto.org/">
   <link rel="canonical" href="https://placeproto.org/">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="fonts.css">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to main content</a>
-  <header class="site-header">
-    <div class="container header-inner">
-      <a class="brand" href="#main">place<span>proto</span></a>
-      <nav aria-label="Sections"><a href="#catalog">Catalog</a><a href="#query">Query</a><a href="#stream">Stream</a><a href="#try">Try it</a></nav>
+  <header class="top">
+    <div class="wrap top-in">
+      <a class="logo" href="#main">${sprig}PlaceProto</a>
+      <nav class="main-nav" aria-label="Sections coming with the site">${sections.map(([name]) => `<a href="#coming">${name}</a>`).join('')}</nav>
+      <div class="top-right">
+        <span class="soon-badge">Coming soon</span>
+        <a class="gh" href="${repoUrl}" aria-label="PlaceProto on GitHub">${github}</a>
+      </div>
     </div>
   </header>
-  <main id="main">
-    <section class="hero">
-      <div class="container">
-        <p class="eyebrow">In progress · first release ${escape(manifest.tag)}</p>
-        <h1>An open vocabulary for places on the AT Protocol</h1>
-        <p class="lede">PlaceProto adds a required location to the records people already write, starting with calendar events. Records stay in their authors' own repositories. Any app can write them, and a shared index finds them by place and time, whoever wrote them.</p>
-        <div class="actions"><a class="button" href="#try">Try it in twenty lines</a><a class="text-link" href="#catalog">Browse the catalog</a></div>
-      </div>
-    </section>
+  <main id="main" class="wrap">
+    <div class="ix">
+      <p class="notice"><strong>Coming soon.</strong> The site is not open yet. The ${escape(manifest.tag)} lexicons and a live index are already usable.</p>
+      <h1>PlaceProto</h1>
+      <p class="big">${escape(sentence)}</p>
+      <p class="form-label">Get one email when the site opens:</p>
+      <p class="actions"><a class="btn primary" href="https://useiriai.com/#waitlist">Notify me</a></p>
+      <p class="form-note">The sign-up is the Iriai waitlist. One email, no newsletter.</p>
 
-    <section class="section" id="catalog" aria-labelledby="catalog-title">
-      <div class="container">
-        <h2 id="catalog-title">Catalog</h2>
-        <div class="notice"><p><strong>The PlaceProto catalog is coming soon.</strong> The <code>org.placeproto</code> namespace is reserved and holds no schemas yet. Today's schemas are published under <code>app.iriai.proto</code> as IriaiProto, PlaceProto's first namespace, and move only when governance for the PlaceProto name exists.</p></div>
-        <p class="legend">Schema status and service status are separate. <strong>Published</strong> means the schema record is live and resolves through DNS. <strong>Available, interim</strong> means a public service answers it today under interim access terms. <strong>Coming soon</strong> means planned, with nothing live.</p>
+      <h2 id="how">How it works</h2>
+      <p>Any app writes an ordinary calendar event and a small sidecar that says where. Any other app can then find it by place and time.</p>
+      <pre class="code"><code>${comment('event · in the author’s own repository')}
+${highlight(sample.event)}
 
-        <h3 class="group-title" id="iriaiproto">IriaiProto <code>app.iriai.proto</code></h3>
-        <p class="group-lede">Release <a href="${releaseUrl}">${escape(manifest.tag)}</a>, verified ${escape(manifest.verifiedAt.slice(0, 10))}. Install from the pinned bundle (SHA-256 <code class="wrap">${escape(manifest.bundle.sha256)}</code>) with <code>@atproto/lex</code> ${escape(manifest.testedTools['@atproto/lex'])}; never a floating latest.</p>
-        <div class="entries">${[...manifest.records].sort((a, b) => (readiness.records[a.nsid].kind === 'Record' ? 0 : 1) - (readiness.records[b.nsid].kind === 'Record' ? 0 : 1)).map(recordEntry).join('')}
-        </div>
+${comment('sidecar · the place, written beside it')}
+${highlight(sample.sidecar)}</code></pre>
 
-        <h3 class="group-title">Coming soon</h3>
-        <ul class="coming">${readiness.coming.map((item) => `<li><p class="coming-title">${escape(item.title)} ${label('planned')}</p><p><code>${escape(item.nsid)}</code>. ${escape(item.summary)}</p></li>`).join('')}</ul>
+      <h2 id="coming">Coming with the site</h2>
+      <ul>${sections.map(([name, line]) => `<li><strong>${name}</strong>: ${escape(line)} <span class="soon">Coming soon</span></li>`).join('')}</ul>
 
-        <h3 class="group-title">Reused community schemas</h3>
-        <p class="group-lede">Vendored unchanged from Lexicon Community and Bluesky, pinned by URI and CID in the release, never republished as ours.</p>
-        <ul class="vendored">${vendored}</ul>
-      </div>
-    </section>
-
-    <section class="section alt" id="query" aria-labelledby="query-title">
-      <div class="container two-col">
-        <div>
-          <h2 id="query-title">Query</h2>
-          <p>${label(readiness.query.status)} <code>${escape(readiness.query.endpoint)}</code></p>
-          <p>${escape(readiness.query.access)}</p>
-          <p>Search by distance from a point, a radius or a box, a time window, author or community event, ordered by distance or start time, with cursors over a stable snapshot. <a href="${escape(readiness.query.docs)}">Parameters and errors</a>.</p>
-          <p class="checked">Last verified</p>
-          <ul class="evidence">${evidence}</ul>
-        </div>
-        <div><pre class="snippet"><code>curl '${escape(queryExample)}'</code></pre></div>
-      </div>
-    </section>
-
-    <section class="section" id="stream" aria-labelledby="stream-title">
-      <div class="container two-col">
-        <div>
-          <h2 id="stream-title">Change stream</h2>
-          <p>${label(readiness.stream.recipe.status)} ${escape(readiness.stream.recipe.summary)}</p>
-          <p>${label(readiness.stream.hosted.status)} ${escape(readiness.stream.hosted.summary)}</p>
-        </div>
-        <div><pre class="snippet"><code>wss://jetstream2.us-east.bsky.network/subscribe?wantedCollections=community.lexicon.calendar.event&amp;wantedCollections=app.iriai.proto.event</code></pre></div>
-      </div>
-    </section>
-
-    <section class="section alt" id="try" aria-labelledby="try-title">
-      <div class="container two-col">
-        <div>
-          <h2 id="try-title">Try it</h2>
-          <p>Twenty lines of TypeScript build the ${escape(manifest.tag)} contracts from the pinned release, ask the live index for events near Japantown Peace Plaza and check every result against the schemas.</p>
-          <div class="actions"><a class="button" href="https://github.com/danielATiriai/iriai-proto/tree/main/examples/try-it">Open the example</a></div>
-        </div>
-        <div><pre class="snippet"><code>git clone https://github.com/danielATiriai/iriai-proto
-cd iriai-proto/examples/try-it
-npm ci
-npm run release
-npm run build
-npm start</code></pre></div>
-      </div>
-    </section>
-
-    <section class="section" id="build" aria-labelledby="build-title">
-      <div class="container">
-        <h2 id="build-title">Built with PlaceProto</h2>
-        <ul class="apps">
-          <li><h3>Corgo</h3><p>A Japantown quest game that publishes its quests as PlaceProto events. Testing on iPhone from October 20.</p></li>
-          <li><h3>Smoke Signal</h3><p>An independent ATProto events app. It lists Iriai's steward events because PlaceProto rides on the community calendar event. <a href="https://smokesignal.events/did:plc:kd5s7zyp7nje43ievnqhgzrr/3mxrq3w4c2k2y">See one there</a>.</p></li>
-          <li><h3>Iriai</h3><p>Bespoke apps for neighborhoods, built on PlaceProto. <a href="https://useiriai.com/#waitlist">Join the waitlist</a> to build with it or try Corgo.</p></li>
-        </ul>
-      </div>
-    </section>
+      <h2 id="now">Available now</h2>
+      <ul>
+        <li><a href="${releaseUrl}">Lexicons ${escape(manifest.tag)}</a> on GitHub: ${manifest.records.map(({ nsid }) => `<code>${escape(nsid)}</code>`).join(' and ')}, published from <code>${escape(manifest.publisher.handle)}</code>. Raw JSON: ${manifest.records.map(({ nsid }) => `<a href="lexicons/${escape(nsid)}.json">${escape(nsid.split('.').pop())}</a>`).join(', ')}.</li>
+        <li><a href="${escape(readiness.query.docs)}">Live index</a> at <code>${escape(readiness.query.endpoint.replace('https://', ''))}</code> (interim, Japantown). Open with no key and per-caller rate limits; search by distance from a point, a radius or a box, a time window or author.</li>
+        <li><a href="${escape(readiness.example)}">Twenty-line example</a>: install the pinned release, query the index near Peace Plaza and check every result against the schemas.</li>
+      </ul>
+      <pre class="code"><code>curl '${escape(queryExample)}'</code></pre>
+      <p class="verified">Last verified ${escape(readiness.checkedAt)}: ${readiness.query.evidence.map((item) => `<a href="${escape(item.url)}">${escape(item.label)}</a>`).join(' · ')}.</p>
+    </div>
   </main>
-  <footer class="site-footer">
-    <div class="container">
-      <p>PlaceProto is in progress and maintained by <a href="https://useiriai.com/">Iriai</a>. Catalog generated from the ${escape(manifest.tag)} release manifest; service status checked ${escape(readiness.checkedAt)}. Source on <a href="https://github.com/danielATiriai/placeproto">GitHub</a>.</p>
+  <footer class="site-foot">
+    <div class="wrap foot-in">
+      <span>© 2026 PlaceProto. An open lexicon, maintained by <a href="https://useiriai.com/">Iriai</a>.</span>
+      <span class="links"><a href="${repoUrl}">GitHub</a><a href="https://atproto.com/">AT Protocol</a><a href="https://bsky.app/profile/${escape(manifest.publisher.handle)}">Bluesky</a></span>
     </div>
   </footer>
 </body>
@@ -170,8 +137,11 @@ npm start</code></pre></div>
 
 await rm(out, { recursive: true, force: true })
 await mkdir(join(out, 'lexicons'), { recursive: true })
+await mkdir(join(out, 'fonts'), { recursive: true })
 await writeFile(join(out, 'index.html'), page)
+await writeFile(join(out, 'fonts.css'), fontCss + '\n')
+for (const [from, file] of fontFiles) await copyFile(from, join(out, 'fonts', file))
 for (const file of ['style.css', 'favicon.svg', 'robots.txt']) await copyFile(join(root, 'site', file), join(out, file))
 for (const [nsid, lexicon] of Object.entries(lexicons)) await writeFile(join(out, 'lexicons', `${nsid}.json`), JSON.stringify(lexicon, null, 2) + '\n')
 await writeFile(join(out, 'release-manifest.json'), JSON.stringify(manifest, null, 2) + '\n')
-console.log(`✓ built dist/ from ${manifest.tag}: ${manifest.records.length} published schemas`)
+console.log(`✓ built dist/ from ${manifest.tag}: ${manifest.records.length} published schemas, ${fontFiles.length} font files`)

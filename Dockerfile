@@ -1,6 +1,7 @@
 FROM node:22-alpine AS build
 WORKDIR /src
-COPY build.mjs ./
+COPY package.json package-lock.json build.mjs ./
+RUN npm ci --omit=dev --ignore-scripts
 COPY catalog/ catalog/
 COPY site/ site/
 RUN node build.mjs
