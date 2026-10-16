@@ -1,16 +1,9 @@
 {
-  "checkedAt": "2026-10-13",
   "release": "v0.1.0",
   "query": {
     "endpoint": "https://query.iriai.app",
-    "status": "available",
-    "docs": "https://github.com/danielATiriai/iriai-proto-index#query-api",
-    "evidence": [
-      { "label": "all nine Japantown seeds returned near Peace Plaza", "url": "https://github.com/danielATiriai/iriai-proto-index/actions/runs/38461986239", "date": "2026-10-13" },
-      { "label": "the twenty-line example runs daily against the live index", "url": "https://github.com/danielATiriai/iriai-proto/actions/workflows/try-it.yml", "date": "2026-10-13" }
-    ]
+    "docs": "https://github.com/danielATiriai/iriai-proto-index#query-api"
   },
-  "example": "https://github.com/danielATiriai/iriai-proto/tree/main/examples/try-it",
   "sample": {
     "event": {
       "$type": "community.lexicon.calendar.event",
@@ -21,7 +14,12 @@
     "sidecar": {
       "$type": "app.iriai.proto.event",
       "eventUri": "at://did:plc:kd5s7zyp7nje43ievnqhgzrr/community.lexicon.calendar.event/3mxrq3w4c2k2y",
-      "location": { "$type": "community.lexicon.location.geo", "name": "JCCCNC", "latitude": "37.7865506", "longitude": "-122.4308591" }
+      "location": {
+        "$type": "community.lexicon.location.geo",
+        "name": "JCCCNC",
+        "latitude": "37.7865506",
+        "longitude": "-122.4308591"
+      }
     }
   }
 }

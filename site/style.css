@@ -23,8 +23,7 @@ p{margin:0}
 .logo:hover{color:var(--heading)}
 .sprig{width:26px;height:26px;color:var(--ink)}
 .main-nav{display:flex;gap:24px;font-size:15px;font-weight:500}
-.main-nav a{display:inline-flex;align-items:center;min-height:44px;text-decoration:none;color:var(--muted)}
-.main-nav a:hover{color:var(--heading)}
+.main-nav span{display:inline-flex;align-items:center;min-height:44px;color:var(--muted);cursor:default}
 .top-right{display:flex;align-items:center;gap:14px;margin-left:auto}
 .soon-badge{font-size:13px;font-weight:600;color:var(--accent-text);white-space:nowrap}
 .gh{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;color:var(--ink)}
@@ -45,7 +44,6 @@ p{margin:0}
 .ix ul{margin:0 0 14px;padding-left:20px}
 .ix li{margin:7px 0}
 .soon{margin-left:6px;font-size:12px;font-weight:600;color:var(--accent-text);white-space:nowrap}
-.verified{font-size:13px;color:var(--muted)}
 pre.code{margin:16px 0 0;padding:20px 22px;font-size:13px;line-height:1.7;white-space:pre-wrap;overflow-wrap:anywhere;background:var(--code-bg);border:1px solid var(--line);border-radius:4px}
 pre.code code{font-size:inherit}
 .tk{color:#8a321a}.ts{color:#3f5d22}.tn{color:#6b3e8a}.tc{color:#6a6257;font-style:italic}

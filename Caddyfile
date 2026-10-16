@@ -28,9 +28,6 @@
 	@documents path / *.html *.css
 	header @documents Cache-Control "public, max-age=0, must-revalidate"
 
-	@lexicons path /lexicons/* /release-manifest.json
-	header @lexicons Access-Control-Allow-Origin "*"
-
 	handle {
 		file_server
 	}

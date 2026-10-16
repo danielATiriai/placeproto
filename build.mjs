@@ -8,11 +8,6 @@ const readJson = async (path) => JSON.parse(await readFile(join(root, path), 'ut
 
 const readiness = await readJson('catalog/readiness.json')
 const manifest = await readJson(`catalog/${readiness.release}/release-manifest.json`)
-const lexicons = Object.fromEntries(
-  await Promise.all(
-    manifest.records.map(async ({ nsid }) => [nsid, await readJson(`catalog/${readiness.release}/lexicons/${nsid.split('.').join('/')}.json`)]),
-  ),
-)
 
 const escape = (value) => String(value).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c])
 const releaseUrl = `https://github.com/danielATiriai/iriai-proto/releases/tag/${manifest.tag}`
@@ -65,7 +60,6 @@ const sections = [
 ]
 
 const sample = readiness.sample
-const queryExample = `${readiness.query.endpoint}/xrpc/app.iriai.proto.queryEvents?latitude=37.785054&longitude=-122.429827&radiusMeters=1000`
 const sentence = 'PlaceProto is an open lexicon built on AT Protocol that connects what happens online to where it happens in real life.'
 
 const page = `<!doctype html>
@@ -88,7 +82,7 @@ const page = `<!doctype html>
   <header class="top">
     <div class="wrap top-in">
       <a class="logo" href="#main">${sprig}PlaceProto</a>
-      <nav class="main-nav" aria-label="Sections coming with the site">${sections.map(([name]) => `<a href="#coming">${name}</a>`).join('')}</nav>
+      <nav class="main-nav" aria-label="Sections coming with the site">${sections.map(([name]) => `<span aria-disabled="true" title="Coming soon">${name}</span>`).join('')}</nav>
       <div class="top-right">
         <span class="soon-badge">Coming soon</span>
         <a class="gh" href="${repoUrl}" aria-label="PlaceProto on GitHub">${github}</a>
@@ -117,12 +111,9 @@ ${highlight(sample.sidecar)}</code></pre>
 
       <h2 id="now">Available now</h2>
       <ul>
-        <li><a href="${releaseUrl}">Lexicons ${escape(manifest.tag)}</a> on GitHub: ${manifest.records.map(({ nsid }) => `<code>${escape(nsid)}</code>`).join(' and ')}, published from <code>${escape(manifest.publisher.handle)}</code>. Raw JSON: ${manifest.records.map(({ nsid }) => `<a href="lexicons/${escape(nsid)}.json">${escape(nsid.split('.').pop())}</a>`).join(', ')}.</li>
-        <li><a href="${escape(readiness.query.docs)}">Live index</a> at <code>${escape(readiness.query.endpoint.replace('https://', ''))}</code> (interim, Japantown). Open with no key and per-caller rate limits; search by distance from a point, a radius or a box, a time window or author.</li>
-        <li><a href="${escape(readiness.example)}">Twenty-line example</a>: install the pinned release, query the index near Peace Plaza and check every result against the schemas.</li>
+        <li><a href="${releaseUrl}">Lexicons ${escape(manifest.tag)}</a> on GitHub</li>
+        <li><a href="${escape(readiness.query.docs)}">Live index</a> at <code>${escape(readiness.query.endpoint.replace('https://', ''))}</code> (interim, Japantown)</li>
       </ul>
-      <pre class="code"><code>curl '${escape(queryExample)}'</code></pre>
-      <p class="verified">Last verified ${escape(readiness.checkedAt)}: ${readiness.query.evidence.map((item) => `<a href="${escape(item.url)}">${escape(item.label)}</a>`).join(' · ')}.</p>
     </div>
   </main>
   <footer class="site-foot">
@@ -136,12 +127,9 @@ ${highlight(sample.sidecar)}</code></pre>
 `
 
 await rm(out, { recursive: true, force: true })
-await mkdir(join(out, 'lexicons'), { recursive: true })
 await mkdir(join(out, 'fonts'), { recursive: true })
 await writeFile(join(out, 'index.html'), page)
 await writeFile(join(out, 'fonts.css'), fontCss + '\n')
 for (const [from, file] of fontFiles) await copyFile(from, join(out, 'fonts', file))
 for (const file of ['style.css', 'favicon.svg', 'robots.txt']) await copyFile(join(root, 'site', file), join(out, file))
-for (const [nsid, lexicon] of Object.entries(lexicons)) await writeFile(join(out, 'lexicons', `${nsid}.json`), JSON.stringify(lexicon, null, 2) + '\n')
-await writeFile(join(out, 'release-manifest.json'), JSON.stringify(manifest, null, 2) + '\n')
-console.log(`✓ built dist/ from ${manifest.tag}: ${manifest.records.length} published schemas, ${fontFiles.length} font files`)
+console.log(`✓ built dist/: coming-soon page for release ${manifest.tag}, ${fontFiles.length} font files`)

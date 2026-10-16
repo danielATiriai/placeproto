@@ -32,14 +32,16 @@ try {
     assert.match(await page.locator('.notice').innerText(), /coming soon/i, 'The page is marked coming soon')
     assert.equal(await page.locator('#coming + ul li').count(), 4, 'Docs, Sandbox, Blog and Showcase are listed as coming')
     assert.equal(await page.locator('#coming + ul .soon').count(), 4, 'Each coming section is labelled coming soon')
-    assert.equal(await page.locator('#now + ul li').count(), 3, 'Lexicons, the live index and the example are listed as available')
+    assert.equal(await page.locator('#now + ul li').count(), 2, 'The lexicons and the live index are listed as available')
+    assert.equal(await page.locator('.main-nav a').count(), 0, 'The nav is disabled: no section is clickable')
+    for (const href of await page.locator('a[href]').evaluateAll((as) => as.map((a) => a.getAttribute('href')))) assert.ok(href.startsWith('https://') || href === '#main', `Only off-site links and the skip link: ${href}`)
     assert.equal(await page.locator('form').count(), 0, 'No dead form ships: the sign-up is a link')
     for (const [family, selector] of [['EB Garamond', 'h1'], ['Inter', 'p.big'], ['IBM Plex Mono', 'pre.code']]) {
       const used = await page.evaluate(async (sel) => { await document.fonts.ready; return getComputedStyle(document.querySelector(sel)).fontFamily }, selector)
       assert.match(used, new RegExp(family), `${selector} uses ${family}`)
       assert.ok(await page.evaluate((f) => document.fonts.check(`16px "${f}"`), family), `${family} is loaded from the self-hosted files`)
     }
-    for (const href of ['lexicons/app.iriai.proto.event.json', 'lexicons/app.iriai.proto.defs.json', 'release-manifest.json', 'fonts.css']) {
+    for (const href of ['fonts.css']) {
       const response = await page.request.get(base + href)
       assert.equal(response.status(), 200, `${href} is served`)
     }
