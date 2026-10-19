@@ -1,0 +1,22 @@
+{
+  "name": "placeproto-site",
+  "private": true,
+  "type": "module",
+  "description": "placeproto.org: the PlaceProto landing page, one page with a contact form.",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "node build.mjs",
+    "check": "node checks/site.mjs",
+    "check-links": "node checks/links.mjs"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.62.1",
+    "axe-core": "4.13.0"
+  },
+  "dependencies": {
+    "@fontsource/cormorant-garamond": "5.3.0",
+    "@fontsource/inter": "5.3.0"
+  }
+}

@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PlaceProto</title>
+  <meta name="description" content="An open standard for linking what apps publish to where it happens. In progress, and looking for collaborators.">
+  <meta property="og:title" content="PlaceProto">
+  <meta property="og:description" content="An open standard for linking what apps publish to where it happens. In progress, and looking for collaborators.">
+  <meta property="og:url" content="https://placeproto.org/">
+  <link rel="canonical" href="https://placeproto.org/">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="favicon-32.png" type="image/png" sizes="32x32">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <link rel="stylesheet" href="fonts.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="top"><div class="wrap top-in"><a class="logo" href="/"><span class="mark" aria-hidden="true">🫚</span>PlaceProto</a></div></header>
+  <main class="wrap"><div class="ix">
+    <h1>PlaceProto: Lexicons for community and place-based apps</h1>
+    <div class="body">
+      <p>PlaceProto is a collective of builders and community organizations working together to define the shared vocabulary of places. PlaceProto is connecting data to places, on three principles.</p>
+      <ol class="pr">
+        <li><i>Simple</i>Where we can, we compose PlaceProto using existing lexicons and concepts.</li>
+        <li><i>Grounded</i>We source PlaceProto lexicons from real apps and real users so our vocabulary accurately describes how communities work.</li>
+        <li><i>Affordant</i>Just as important as building an open standard is an ecosystem where every neighborhood can define their own lexicon.</li>
+      </ol>
+      <p>We’re looking to build together with companies, developers, community organizations, and neighborhood organizations.</p>
+      <p><b>Interested? Connect with us here:</b></p>
+    </div>
+    <p class="cta"><button class="btn" type="button" popovertarget="connect">Get in touch</button></p>
+  </div></main>
+  <footer class="foot"><div class="wrap">PlaceProto is an open standard in progress. Development sponsored by <a href="https://useiriai.com/">Iriai</a>.</div></footer>
+
+  <div id="connect" popover role="dialog" aria-labelledby="connect-title">
+    <div class="dlg-head"><span class="dlg-mark" aria-hidden="true">🫚</span><div><h2 id="connect-title">Build PlaceProto with us</h2><p class="lead">Tell us a little about yourself and we’ll be in touch. Starred fields are required.</p></div><button class="x" type="button" popovertarget="connect" popovertargetaction="hide" aria-label="Close">×</button></div>
+    <form name="placeproto" method="post" action="https://script.google.com/macros/s/AKfycbxlr_Af4gyBFM0swKgr1E05rJjndda6fUF4f3Kyw84ZsIqjbl7JJRTz9olG4iEZQjXBjA/exec" novalidate>
+      <input type="hidden" name="form" value="placeproto"><input type="hidden" name="t" value="">
+      <div class="honeypot" aria-hidden="true"><label>Website<input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
+      <div class="row">
+        <label class="field"><span>Name<i class="req" aria-hidden="true">*</i></span><input type="text" name="name" autocomplete="name" required placeholder="Ada Lovelace"><small class="field-error" aria-live="polite"></small></label>
+        <label class="field"><span>Email<i class="req" aria-hidden="true">*</i></span><input type="email" name="email" autocomplete="email" required placeholder="ada@example.org"><small class="field-error" aria-live="polite"></small></label>
+      </div>
+      <fieldset class="field"><legend>Which describes you?<i class="req" aria-hidden="true">*</i></legend><div class="roles"><label><input type="radio" name="segment" value="company" required><span>Company</span></label><label><input type="radio" name="segment" value="developer" required><span>Developer</span></label><label><input type="radio" name="segment" value="community-organization" required><span>Community organization</span></label><label><input type="radio" name="segment" value="neighborhood-organization" required><span>Neighborhood organization</span></label><label><input type="radio" name="segment" value="other" required><span>Other</span></label></div><small class="field-error" aria-live="polite"></small></fieldset>
+      <label class="field"><span>Organization or neighborhood</span><input type="text" name="organization" autocomplete="organization" placeholder="Japantown Merchants Association"></label>
+      <label class="field"><span>What would you like to work on?</span><textarea name="message" placeholder="A few words is plenty."></textarea></label>
+      <div class="actions"><p class="privacy">We only use this to reply to you.</p><p class="form-error" role="alert" hidden>Not sent. Please try again.</p><button class="btn ghost" type="button" popovertarget="connect" popovertargetaction="hide">Cancel</button><button class="btn" type="submit">Send</button></div>
+      <div class="form-success" tabindex="-1" hidden><p><b>Thanks. We’ll be in touch.</b></p><p>Your note is on its way.</p></div>
+    </form>
+  </div>
+  <script src="site.js" defer></script>
+</body>
+</html>
