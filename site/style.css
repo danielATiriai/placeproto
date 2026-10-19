@@ -1,5 +1,5 @@
 /* placeproto.org — the Letter layout in option F, Cream and Cormorant (Daniel's pick, 2026-10-19). */
-:root{--bg:#fdf6ea;--paper:#fff;--code:#f5e8d2;--text:#3a2a18;--heading:#2b1c0c;--muted:#7a6448;--line:#e9d9bf;--line-strong:#cfb58e;--accent:#a8602a;--tile-on:#f7e4cc;--display:"Cormorant Garamond",Georgia,serif;--body:"Inter",system-ui,sans-serif}
+:root{--bg:#fdf6ea;--paper:#fff;--code:#f5e8d2;--text:#3a2a18;--heading:#2b1c0c;--muted:#7a6448;--line:#e9d9bf;--line-strong:#cfb58e;--accent:#a35d28;--tile-on:#f7e4cc;--display:"Cormorant Garamond",Georgia,serif;--body:"Inter",system-ui,sans-serif}
 *{box-sizing:border-box}
 [hidden]{display:none!important}
 html{-webkit-text-size-adjust:100%}
