@@ -1,6 +1,6 @@
 # placeproto
 
-The PlaceProto landing page, served at https://placeproto.org (slice 3.1, BUILD-007). It is one page, the "Letter" layout Daniel chose on Oct 16 with the copy he wrote on Oct 19: the Kickoff label, the headline, the three principles (Simple, Grounded, Emergence), the call for collaborators, and one button, "Get in touch", that opens a short contact form. The footer names Iriai as sponsor and links to useiriai.com. Nothing else is served. This repository will also hold the `org.placeproto` lexicons once governance for the name exists.
+The PlaceProto landing page, served at https://placeproto.org (slice 3.1, BUILD-007). It is one page, the "Letter" layout Daniel chose on Oct 16 with the copy he wrote on Oct 19: the Kickoff label, the headline, the three principles (Simple, Grounded, Affordant), the call for collaborators, and one button, "Get in touch", that opens a short contact form. The footer names Iriai as sponsor and links to useiriai.com. Nothing else is served. This repository will also hold the `org.placeproto` lexicons once governance for the name exists.
 
 ## Design
 
@@ -8,7 +8,7 @@ Handbook type on the parchment palette: EB Garamond 500 for headings, the wordma
 
 ## The contact form
 
-`site/index.html` holds the form and `site/site.js` the submit flow, the same as the useiriai.com waitlist (`landing-page/landing.js`): it posts to the Iriai Apps Script with `form=placeproto`, `ajax=1`, a time-to-submit field `t` and a hidden `website` honeypot, then shows a thanks state. Fields: `name` and `email` (required), `segment` (one of `company`, `developer`, `community-leader`, `neighborhood-organization`, `other`; required), `organization` and `message` (optional). The Apps Script needs a `placeproto` branch that writes a `PlaceProto` tab before it accepts these submissions; until Daniel redeploys it, the script rejects them and the form shows its error state.
+`site/index.html` holds the form and `site/site.js` the submit flow, the same as the useiriai.com waitlist (`landing-page/landing.js`): it posts to the Iriai Apps Script with `form=placeproto`, `ajax=1`, a time-to-submit field `t` and a hidden `website` honeypot, then shows a thanks state. Fields: `name` and `email` (required), `segment` (one of `company`, `developer`, `community-organization`, `neighborhood-organization`, `other`; required), `organization` and `message` (optional). The Apps Script needs a `placeproto` branch that writes a `PlaceProto` tab before it accepts these submissions; until Daniel redeploys it, the script rejects them and the form shows its error state.
 
 ## How the page is made
 

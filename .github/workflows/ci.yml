@@ -24,7 +24,7 @@ jobs:
       - run: npm ci
       - run: npx playwright install --with-deps chromium
       - run: npm run build
-      - name: Catalog, readiness labels, layout and accessibility
+      - name: Copy, contact form, layout and accessibility
         run: npm run check
       - name: Every outbound link resolves
         run: npm run check-links

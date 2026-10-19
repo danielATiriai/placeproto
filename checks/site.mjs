@@ -40,7 +40,7 @@ try {
     // Daniel's copy, in order.
     assert.equal(await page.locator('.st').innerText(), 'Kickoff', 'The status label reads Kickoff')
     assert.match(await page.locator('h1').innerText(), /^PlaceProto: Lexicons for community and place-based apps$/, 'The headline is the one from the copy doc')
-    assert.deepEqual(await page.locator('.pr i').allInnerTexts(), ['Simple', 'Grounded', 'Emergence'], 'The three principles, in order')
+    assert.deepEqual(await page.locator('.pr i').allInnerTexts(), ['Simple', 'Grounded', 'Affordant'], 'The three principles, in order')
     assert.match(await page.locator('.foot').innerText(), /open standard in progress\. Development sponsored by Iriai\./, 'The footer line')
     assert.equal(await page.locator('.foot a').getAttribute('href'), 'https://useiriai.com/', 'Iriai in the footer links to useiriai.com')
     assert.equal(await page.locator('main .btn').count(), 1, 'One button on the page')
@@ -73,7 +73,7 @@ try {
     assert.equal(await form.locator('input[name=form]').inputValue(), 'placeproto', 'It identifies itself as the placeproto form')
     assert.match(await form.locator('input[name=t]').inputValue(), /^\d{13}$/, 'The submit script set the time-to-submit field')
     assert.ok(await form.locator('input[name=website]').evaluate((el) => el.getBoundingClientRect().right < 0), 'The honeypot is off screen')
-    assert.deepEqual(await form.locator('input[name=segment]').evaluateAll((els) => els.map((e) => e.value)), ['company', 'developer', 'community-leader', 'neighborhood-organization', 'other'], 'The five segments')
+    assert.deepEqual(await form.locator('input[name=segment]').evaluateAll((els) => els.map((e) => e.value)), ['company', 'developer', 'community-organization', 'neighborhood-organization', 'other'], 'The five segments')
     for (const name of ['name', 'email', 'organization', 'message']) assert.equal(await form.locator(`[name=${name}]`).count(), 1, `The ${name} field`)
     for (const target of await page.locator('#connect .btn, #connect .x, .roles label').all()) {
       const box = await target.boundingBox()
