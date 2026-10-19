@@ -13,14 +13,12 @@ p{margin:0 0 14px}
 .top-in{display:flex;align-items:center;height:64px}
 .logo{display:inline-flex;align-items:center;gap:10px;min-height:44px;color:var(--heading);text-decoration:none;font:500 22px/1 var(--display)}
 .logo .mark{font:24px/1 "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif}
-.st{display:inline-block;padding:1px 9px;font:600 12px/1.6 var(--body);white-space:nowrap;border-radius:999px;border:1px solid #cdd8bd;color:var(--moss);background:#f1f5ea}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:46px;padding:0 22px;font:600 15px/1 var(--body);color:#fff;background:var(--text);border:0;border-radius:4px;text-decoration:none;cursor:pointer}
 .btn:hover{background:#000}
 .btn:disabled{opacity:.7;cursor:progress}
 .btn.ghost{color:var(--text);background:transparent;border:1px solid var(--line-strong)}
 .btn.ghost:hover{background:var(--code)}
 .ix{max-width:640px;margin:0 auto;padding:64px 0 96px}
-.kicker{margin-bottom:28px}
 h1{font-size:44px;line-height:1.1;margin:0 0 28px}
 .body p{font-size:18px;line-height:1.7;margin:0 0 20px}
 .body b{font-weight:600;color:var(--heading)}

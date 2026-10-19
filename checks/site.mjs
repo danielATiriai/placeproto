@@ -38,7 +38,7 @@ try {
     assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), `No horizontal scroll at ${width}px`)
 
     // Daniel's copy, in order.
-    assert.equal(await page.locator('.st').innerText(), 'Kickoff', 'The status label reads Kickoff')
+    assert.equal(await page.locator('.st').count(), 0, 'No status pill')
     assert.match(await page.locator('h1').innerText(), /^PlaceProto: Lexicons for community and place-based apps$/, 'The headline is the one from the copy doc')
     assert.deepEqual(await page.locator('.pr i').allInnerTexts(), ['Simple', 'Grounded', 'Affordant'], 'The three principles, in order')
     assert.match(await page.locator('.foot').innerText(), /open standard in progress\. Development sponsored by Iriai\./, 'The footer line')
@@ -56,7 +56,7 @@ try {
     assert.ok(await page.evaluate((f) => document.fonts.check(`italic 500 16px "${f}"`), 'EB Garamond'), 'The EB Garamond italic is loaded')
     assert.equal(await page.locator('.logo .mark').innerText(), '🫚', 'The ginger emoji is the mark')
     assert.match(await (await page.request.get(base + 'favicon.svg')).text(), /🫚/, 'The favicon is the ginger emoji')
-    for (const href of ['fonts.css', 'site.js', 'fonts/OFL-inter.txt', 'fonts/OFL-eb-garamond.txt']) assert.equal((await page.request.get(base + href)).status(), 200, `${href} is served`)
+    for (const href of ['fonts.css', 'site.js', 'favicon-32.png', 'apple-touch-icon.png', 'fonts/OFL-inter.txt', 'fonts/OFL-eb-garamond.txt']) assert.equal((await page.request.get(base + href)).status(), 200, `${href} is served`)
 
     for (const target of await page.locator('.logo, .btn').all()) { // the footer link is inline text, exempt from the 44px rule
       const box = await target.boundingBox()
