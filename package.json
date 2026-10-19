@@ -2,7 +2,7 @@
   "name": "placeproto-site",
   "private": true,
   "type": "module",
-  "description": "placeproto.org: the PlaceProto landing page and catalog, generated from the pinned IriaiProto release manifest.",
+  "description": "placeproto.org: the PlaceProto landing page, one page with a contact form.",
   "engines": {
     "node": ">=22"
   },
