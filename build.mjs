@@ -5,11 +5,11 @@ import { fileURLToPath } from 'node:url'
 const root = fileURLToPath(new URL('.', import.meta.url))
 const out = join(root, 'dist')
 
-// Self-hosted type (design settled Oct 16): EB Garamond 500 for headings and the wordmark, with its
-// italic for the principle names, and Inter 400/600 for body and UI. Latin and Latin Extended only.
+// Self-hosted type (option F, chosen Oct 19): Cormorant Garamond 600 for headings and the wordmark,
+// with its italic for the principle names, and Inter 400/600 for body and UI. Latin and Latin Extended only.
 const fonts = [
-  ['EB Garamond', 'eb-garamond', 500, 'normal', ['latin', 'latin-ext']],
-  ['EB Garamond', 'eb-garamond', 500, 'italic', ['latin']],
+  ['Cormorant Garamond', 'cormorant-garamond', 600, 'normal', ['latin', 'latin-ext']],
+  ['Cormorant Garamond', 'cormorant-garamond', 600, 'italic', ['latin', 'latin-ext']],
   ['Inter', 'inter', 400, 'normal', ['latin', 'latin-ext']],
   ['Inter', 'inter', 600, 'normal', ['latin', 'latin-ext']],
 ]
@@ -32,6 +32,6 @@ await rm(out, { recursive: true, force: true })
 await mkdir(join(out, 'fonts'), { recursive: true })
 await writeFile(join(out, 'fonts.css'), fontCss + '\n')
 for (const [from, file] of fontFiles) await copyFile(from, join(out, 'fonts', file))
-for (const [pkg, name] of [['eb-garamond', 'OFL-eb-garamond.txt'], ['inter', 'OFL-inter.txt']]) await copyFile(join(root, 'node_modules', '@fontsource', pkg, 'LICENSE'), join(out, 'fonts', name))
+for (const [pkg, name] of [['cormorant-garamond', 'OFL-cormorant-garamond.txt'], ['inter', 'OFL-inter.txt']]) await copyFile(join(root, 'node_modules', '@fontsource', pkg, 'LICENSE'), join(out, 'fonts', name))
 for (const file of ['index.html', 'style.css', 'site.js', 'favicon.svg', 'favicon-32.png', 'apple-touch-icon.png', 'robots.txt']) await copyFile(join(root, 'site', file), join(out, file))
 console.log(`✓ built dist/: the PlaceProto page with ${fontFiles.length} font files`)

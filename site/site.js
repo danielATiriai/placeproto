@@ -7,6 +7,7 @@ Array.from(document.forms).forEach((form) => {
   const originalButtonText = submitButton.textContent;
   const errorState = form.querySelector(".form-error");
   const successState = form.querySelector(".form-success");
+  const privacyLine = form.querySelector(".privacy");
 
   const showValidation = () => {
     form.querySelectorAll(".field").forEach((field) => {
@@ -22,6 +23,7 @@ Array.from(document.forms).forEach((form) => {
     event.preventDefault();
     form.classList.add("was-submitted");
     errorState.hidden = true;
+    privacyLine.hidden = false;
     showValidation();
     if (!form.checkValidity()) {
       form.reportValidity();
@@ -40,6 +42,7 @@ Array.from(document.forms).forEach((form) => {
       successState.hidden = false;
       successState.focus();
     } catch {
+      privacyLine.hidden = true;
       errorState.hidden = false;
       submitButton.disabled = false;
       submitButton.textContent = originalButtonText;

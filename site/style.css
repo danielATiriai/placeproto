@@ -1,59 +1,71 @@
-/* placeproto.org — the Letter layout in Handbook type (design settled 2026-10-16, copy by Daniel 2026-10-19). */
-:root{--bg:#fdfbf6;--paper:#fff;--code:#f7f3ea;--text:#26211b;--heading:#1d1812;--muted:#6a6257;--line:#e6e0d3;--line-strong:#cfc6b3;--accent:#8a321a;--moss:#3f5d22;--display:"EB Garamond",Georgia,serif;--body:"Inter",system-ui,sans-serif}
+/* placeproto.org — the Letter layout in option F, Cream and Cormorant (Daniel's pick, 2026-10-19). */
+:root{--bg:#fdf6ea;--paper:#fff;--code:#f5e8d2;--text:#3a2a18;--heading:#2b1c0c;--muted:#7a6448;--line:#e9d9bf;--line-strong:#cfb58e;--accent:#a8602a;--tile-on:#f7e4cc;--display:"Cormorant Garamond",Georgia,serif;--body:"Inter",system-ui,sans-serif}
 *{box-sizing:border-box}
 [hidden]{display:none!important}
 html{-webkit-text-size-adjust:100%}
 body{margin:0;background:var(--bg);color:var(--text);font:16px/1.65 var(--body)}
 a{color:var(--accent)}
-h1,h2{margin:0;font-family:var(--display);font-weight:500;color:var(--heading)}
+h1,h2{margin:0;font-family:var(--display);font-weight:600;color:var(--heading)}
 p{margin:0 0 14px}
 :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .wrap{width:min(1240px,calc(100% - 48px));margin-inline:auto}
 .top{border-bottom:1px solid var(--line)}
 .top-in{display:flex;align-items:center;height:64px}
-.logo{display:inline-flex;align-items:center;gap:10px;min-height:44px;color:var(--heading);text-decoration:none;font:500 22px/1 var(--display)}
+.logo{display:inline-flex;align-items:center;gap:10px;min-height:44px;color:var(--heading);text-decoration:none;font:600 25px/1 var(--display)}
 .logo .mark{font:24px/1 "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:46px;padding:0 22px;font:600 15px/1 var(--body);color:#fff;background:var(--text);border:0;border-radius:4px;text-decoration:none;cursor:pointer}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:46px;padding:0 22px;font:600 15px/1 var(--body);color:#fff;background:var(--heading);border:0;border-radius:6px;text-decoration:none;cursor:pointer}
 .btn:hover{background:#000}
 .btn:disabled{opacity:.7;cursor:progress}
 .btn.ghost{color:var(--text);background:transparent;border:1px solid var(--line-strong)}
 .btn.ghost:hover{background:var(--code)}
-.ix{max-width:640px;margin:0 auto;padding:64px 0 96px}
-h1{font-size:44px;line-height:1.1;margin:0 0 28px}
+.ix{max-width:640px;margin:0 auto;padding:72px 0 100px}
+h1{font-size:56px;line-height:1.02;margin:0 0 30px}
 .body p{font-size:18px;line-height:1.7;margin:0 0 20px}
 .body b{font-weight:600;color:var(--heading)}
-.pr{margin:4px 0 30px;padding:0 0 0 22px;border-left:2px solid var(--line-strong);list-style:none}
+.pr{margin:4px 0 30px;padding:0 0 0 22px;border-left:2px solid #b5703a;list-style:none}
 .pr li{margin:0 0 16px;font-size:18px;line-height:1.6}
 .pr li:last-child{margin:0}
-.pr i{display:block;font:italic 500 24px/1.3 var(--display);color:var(--heading)}
+.pr i{display:block;font:italic 600 28px/1.3 var(--display);color:var(--heading)}
 .cta{margin:8px 0 0}
 .foot{border-top:1px solid var(--line);padding:28px 0 40px;font-size:14px;color:var(--muted)}
 .foot a{color:inherit}
 
-/* The contact form, a native popover so opening and closing needs no script. */
-#connect{width:min(520px,calc(100% - 32px));max-height:calc(100% - 32px);margin:auto;padding:28px 28px 24px;overflow:auto;color:var(--text);background:var(--bg);border:1px solid var(--line);border-radius:6px;box-shadow:0 24px 60px rgba(29,24,18,.18)}
-#connect::backdrop{background:rgba(29,24,18,.42)}
-#connect h2{font-size:30px;line-height:1.15;margin:0 40px 6px 0}
-#connect .x{position:absolute;top:14px;right:14px;width:44px;height:44px;font:400 24px/1 var(--body);color:var(--muted);background:transparent;border:0;border-radius:4px;cursor:pointer}
-#connect .x:hover{color:var(--text);background:var(--code)}
-#connect .lead{color:var(--muted);margin:0 0 20px}
-.field{display:block;margin:0 0 16px}
-.field>span,.field legend{display:block;margin:0 0 6px;padding:0;font-size:14px;font-weight:600;color:var(--heading)}
+/* The contact form: a native popover so opening and closing needs no script. Nothing in it changes height
+   while you fill it in: required fields are starred, and an empty one is outlined, not captioned. */
+#connect{width:min(560px,calc(100% - 32px));max-height:calc(100% - 32px);margin:auto;padding:0;overflow:auto;color:var(--text);background:var(--bg);border:1px solid var(--line);border-radius:8px;box-shadow:0 24px 60px rgba(43,28,12,.2)}
+#connect::backdrop{background:rgba(43,28,12,.5)}
+.dlg-head{position:relative;display:flex;gap:14px;align-items:flex-start;padding:22px 64px 18px 24px;background:var(--code);border-bottom:1px solid var(--line)}
+.dlg-mark{font:30px/1 "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif;margin-top:2px}
+#connect h2{font-size:30px;line-height:1.15;margin:0 0 2px}
+#connect .lead{margin:0;font-size:14.5px;color:var(--muted)}
+#connect .x{position:absolute;top:12px;right:12px;width:44px;height:44px;font:400 24px/1 var(--body);color:var(--muted);background:transparent;border:0;border-radius:6px;cursor:pointer}
+#connect .x:hover{color:var(--text);background:var(--paper)}
+#connect form{padding:22px 24px 20px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.field{display:block;margin:0 0 18px}
+.field>span,.field legend{display:block;margin:0 0 7px;padding:0;font-size:13.5px;font-weight:600;color:var(--heading)}
 .field small{font-weight:400;color:var(--muted)}
-.field-error{display:block;min-height:0;margin-top:4px;font-size:13px;color:var(--accent)}
-.field-error:empty{display:none}
-fieldset.field{border:0;padding:0;min-width:0;margin:0 0 16px}
-input[type=text],input[type=email],textarea{width:100%;min-height:44px;padding:10px 12px;font:inherit;font-size:15px;color:inherit;background:var(--paper);border:1px solid var(--line-strong);border-radius:4px}
+.req{font-style:normal;color:var(--accent);margin-left:3px}
+.field-error{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+fieldset.field{border:0;padding:0;min-width:0}
+input[type=text],input[type=email],textarea{width:100%;min-height:44px;padding:10px 12px;font:inherit;font-size:15px;color:inherit;background:var(--paper);border:1px solid var(--line-strong);border-radius:6px}
+input::placeholder,textarea::placeholder{color:#b3a48e}
 textarea{min-height:92px;resize:vertical}
 input:focus,textarea:focus{outline:2px solid var(--accent);outline-offset:1px}
-.was-submitted input[aria-invalid=true]{border-color:var(--accent)}
-.roles{display:flex;flex-wrap:wrap;gap:8px}
-.roles label{display:inline-flex;align-items:center;gap:7px;min-height:44px;padding:7px 12px;font-size:14px;background:var(--paper);border:1px solid var(--line-strong);border-radius:999px;cursor:pointer}
-.roles input{margin:0;accent-color:var(--text)}
-.roles label:has(input:checked){border-color:var(--text);box-shadow:inset 0 0 0 1px var(--text)}
+.roles{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.roles label{position:relative;display:flex;align-items:center;min-height:46px;padding:10px 12px 10px 38px;font-size:14px;line-height:1.3;background:var(--paper);border:1px solid var(--line-strong);border-radius:6px;cursor:pointer}
+.roles label:last-child{grid-column:span 2}
+.roles input{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:16px;height:16px;margin:0;accent-color:var(--accent)}
+.roles label:has(input:checked){border-color:var(--accent);background:var(--tile-on)}
+.roles label:has(input:focus-visible){outline:2px solid var(--accent);outline-offset:2px}
+.was-submitted input[aria-invalid=true]:not([type=radio]){border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
+.was-submitted .roles:has([aria-invalid=true]) label{border-color:var(--accent)}
+.was-submitted .field:has([aria-invalid=true])>span,.was-submitted .field:has([aria-invalid=true])>legend{color:var(--accent)}
 .honeypot{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
-.form-error{padding:10px 12px;font-size:14px;color:var(--accent);background:#f9ece7;border:1px solid #e6c9bd;border-radius:4px}
+.actions{display:flex;align-items:center;gap:10px;margin-top:4px;padding-top:16px;border-top:1px solid var(--line)}
+.privacy,.form-error{flex:1;margin:0;font-size:12.5px;line-height:1.4;color:var(--muted)}
+.form-error{color:var(--accent);font-weight:600}
+.form-success{padding:8px 0}
 .form-success p{margin:0 0 8px;font-size:16px}
 .form-success:focus{outline:none}
-.actions{display:flex;gap:10px;justify-content:flex-end;margin-top:8px}
-@media(max-width:760px){.wrap{width:calc(100% - 32px)}.ix{padding:32px 0 64px}h1{font-size:34px}.body p,.pr li{font-size:17px}.pr i{font-size:22px}.btn{width:100%}#connect{padding:22px 20px 20px}#connect h2{font-size:26px}.actions{flex-direction:column-reverse}}
+@media(max-width:760px){.wrap{width:calc(100% - 32px)}.ix{padding:40px 0 64px}h1{font-size:40px}.body p,.pr li{font-size:17px}.pr i{font-size:25px}.btn{width:100%}#connect h2{font-size:26px}#connect form{padding:18px 18px 16px}.dlg-head{padding:18px 56px 16px 18px}.row,.roles{grid-template-columns:1fr}.roles label:last-child{grid-column:auto}.actions{flex-direction:column-reverse;align-items:stretch}.privacy,.form-error{text-align:center;padding-top:4px}}
