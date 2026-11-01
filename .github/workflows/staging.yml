@@ -40,7 +40,8 @@ jobs:
           for number in $(jq -r '.[].number' <<<"$labeled"); do
             labeled_at="$(gh api --paginate "repos/$REPO/issues/$number/events?per_page=100" \
               --jq '.[] | select(.event == "labeled" and .label.name == "staging") | .created_at' | sort | tail -n 1)"
-            if [ -n "$labeled_at" ] && [ "$labeled_at" \> "$chosen_at" ]; then
+            labeled_at="${labeled_at:-9999}"
+            if [ "$labeled_at" \> "$chosen_at" ]; then
               chosen_at="$labeled_at"
               chosen_sha="$(jq -r --argjson n "$number" '.[] | select(.number == $n) | .sha' <<<"$labeled")"
             fi
