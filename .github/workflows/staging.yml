@@ -9,6 +9,7 @@ on:
 
 permissions:
   contents: write
+  pull-requests: read
 
 concurrency:
   group: staging-branch
@@ -26,32 +27,32 @@ jobs:
       - name: Choose the commit staging should show
         id: target
         env:
-          EVENT_NAME: ${{ github.event_name }}
-          ACTION: ${{ github.event.action }}
-          LABEL: ${{ github.event.label.name }}
-          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
-          HAS_STAGING_LABEL: ${{ contains(github.event.pull_request.labels.*.name, 'staging') }}
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
           DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
         run: |
           set -euo pipefail
           current="$(git rev-parse -q --verify origin/staging || true)"
-          target=""
-          if [ "$EVENT_NAME" = "workflow_dispatch" ]; then
+          labeled="$(gh api "repos/$REPO/pulls?state=open&per_page=100" \
+            --jq "[.[] | select(.head.repo.full_name == \"$REPO\" and any(.labels[]; .name == \"staging\")) | {number, sha: .head.sha}]")"
+          chosen_sha=""
+          chosen_at=""
+          for number in $(jq -r '.[].number' <<<"$labeled"); do
+            labeled_at="$(gh api --paginate "repos/$REPO/issues/$number/events?per_page=100" \
+              --jq '.[] | select(.event == "labeled" and .label.name == "staging") | .created_at' | sort | tail -n 1)"
+            if [ -n "$labeled_at" ] && [ "$labeled_at" \> "$chosen_at" ]; then
+              chosen_at="$labeled_at"
+              chosen_sha="$(jq -r --argjson n "$number" '.[] | select(.number == $n) | .sha' <<<"$labeled")"
+            fi
+          done
+          if [ -n "$chosen_sha" ]; then
+            git fetch origin "$chosen_sha"
+            target="$chosen_sha"
+          else
             target="origin/$DEFAULT_BRANCH"
-          elif [ "$EVENT_NAME" = "push" ]; then
-            if [ -z "$current" ] || git merge-base --is-ancestor "$current" "origin/$DEFAULT_BRANCH"; then
-              target="origin/$DEFAULT_BRANCH"
-            fi
-          elif [ "$ACTION" = "labeled" ] && [ "$LABEL" = "staging" ]; then
-            git fetch origin "$HEAD_SHA"
-            target="$HEAD_SHA"
-          elif [ "$ACTION" = "synchronize" ] && [ "$HAS_STAGING_LABEL" = "true" ]; then
-            git fetch origin "$HEAD_SHA"
-            target="$HEAD_SHA"
-          elif { [ "$ACTION" = "closed" ] && [ "$HAS_STAGING_LABEL" = "true" ]; } || { [ "$ACTION" = "unlabeled" ] && [ "$LABEL" = "staging" ]; }; then
-            if [ "$current" = "$HEAD_SHA" ]; then
-              target="origin/$DEFAULT_BRANCH"
-            fi
+          fi
+          if [ "$(git rev-parse "$target")" = "$current" ]; then
+            target=""
           fi
           echo "target=$target" >> "$GITHUB_OUTPUT"
       - name: Move the staging branch
