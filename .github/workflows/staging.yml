@@ -36,6 +36,7 @@ jobs:
           EVENT_LABEL: ${{ github.event.label.name }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
           PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          PR_STATE: ${{ github.event.pull_request.state }}
         run: |
           set -euo pipefail
           git fetch --no-tags origin \
@@ -48,7 +49,7 @@ jobs:
           if [ "$EVENT_NAME" = "pull_request_target" ]; then
             if [ "$ACTION" = "closed" ] || { [ "$ACTION" = "unlabeled" ] && [ "$EVENT_LABEL" = "staging" ]; }; then
               labeled="$(jq --argjson n "$PR_NUMBER" '[.[] | select(.number != $n)]' <<<"$labeled")"
-            elif [ "$ACTION" = "labeled" ] && [ "$EVENT_LABEL" = "staging" ]; then
+            elif [ "$ACTION" = "labeled" ] && [ "$EVENT_LABEL" = "staging" ] && [ "$PR_STATE" = "open" ]; then
               labeled="$(jq --argjson n "$PR_NUMBER" --arg s "$PR_HEAD_SHA" '[.[] | select(.number != $n)] + [{number: $n, sha: $s}]' <<<"$labeled")"
             else
               labeled="$(jq --argjson n "$PR_NUMBER" --arg s "$PR_HEAD_SHA" 'map(if .number == $n then .sha = $s else . end)' <<<"$labeled")"
@@ -58,13 +59,19 @@ jobs:
           chosen_at=""
           for number in $(jq -r '.[].number' <<<"$labeled"); do
             sha="$(jq -r --argjson n "$number" '.[] | select(.number == $n) | .sha' <<<"$labeled")"
-            git fetch --no-tags origin "$sha"
+            git fetch --no-tags origin "$sha" || continue
             if git merge-base --is-ancestor "$sha" "origin/$DEFAULT_BRANCH"; then
+              continue
+            fi
+            if [ "$(gh api "repos/$REPO/pulls/$number" --jq '.state')" != "open" ]; then
               continue
             fi
             labeled_at="$(gh api --paginate "repos/$REPO/issues/$number/events?per_page=100" \
               --jq '.[] | select(.event == "labeled" and .label.name == "staging") | .created_at' | sort | tail -n 1)"
             labeled_at="${labeled_at:-9999}"
+            if [ "$EVENT_NAME" = "pull_request_target" ] && [ "$ACTION" = "labeled" ] && [ "$EVENT_LABEL" = "staging" ] && [ "$number" = "$PR_NUMBER" ]; then
+              labeled_at="9999"
+            fi
             if [ "$labeled_at" \> "$chosen_at" ]; then
               chosen_at="$labeled_at"
               chosen_sha="$sha"
