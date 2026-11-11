@@ -33,6 +33,7 @@ jobs:
           DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
         run: |
           set -euo pipefail
+          git fetch --no-tags origin "+refs/heads/$DEFAULT_BRANCH:refs/remotes/origin/$DEFAULT_BRANCH"
           current="$(git rev-parse -q --verify origin/staging || true)"
           labeled="$(gh api "repos/$REPO/pulls?state=open&per_page=100" \
             --jq "[.[] | select(.head.repo.full_name == \"$REPO\" and any(.labels[]; .name == \"staging\")) | {number, sha: .head.sha}]")"
