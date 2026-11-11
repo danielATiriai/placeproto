@@ -39,7 +39,7 @@ jobs:
         run: |
           set -euo pipefail
           staging_rc=0
-          git ls-remote --exit-code --heads origin staging >/dev/null || staging_rc=$?
+          git ls-remote --exit-code origin refs/heads/staging >/dev/null || staging_rc=$?
           case "$staging_rc" in
             0) git fetch --no-tags origin \
                  "+refs/heads/$DEFAULT_BRANCH:refs/remotes/origin/$DEFAULT_BRANCH" \
@@ -56,7 +56,7 @@ jobs:
             if [ "$ACTION" = "closed" ] || { [ "$ACTION" = "unlabeled" ] && [ "$EVENT_LABEL" = "staging" ]; }; then
               dropped="$PR_NUMBER"
             else
-              candidates="$(jq -c --argjson n "$PR_NUMBER" '. + [$n] | unique' <<<"$candidates")"
+              candidates="$(jq -c --argjson n "$PR_NUMBER" 'if index($n) then . else . + [$n] end' <<<"$candidates")"
             fi
           fi
           chosen_sha=""
